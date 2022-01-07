@@ -3,7 +3,8 @@ import shutil
 import requests
 import random
 
-from urllib.parse import urlparse
+from os.path import split
+from urllib.parse import urlparse, unquote
 from dotenv import load_dotenv
 
 API_URL = "https://api.vk.com"
@@ -26,7 +27,7 @@ def get_random_comic():
 
 
 def download_picture(picture_url):
-    img_path = urlparse(picture_url).path
+    img_path = unquote(split(urlparse(picture_url).path)[-1])
     out_file_name = os.path.basename(img_path)
 
     response = requests.get(url=picture_url, stream=True)
