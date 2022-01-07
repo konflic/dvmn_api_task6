@@ -50,13 +50,14 @@ def get_upload_url(access_token, group_id):
     return response.json()["response"]["upload_url"]
 
 
-def upload_picture(file_name, upload_url):
-    file_path = f"Files/{file_name}"
+def upload_picture(file_name, upload_url, folder="Files"):
+    file_path = os.path.join(folder, file_name)
+
     with open(file_path, "rb") as file:
         files = {"file1": file}
         response = requests.post(upload_url, files=files)
         response.raise_for_status()
-    os.remove(file_path)
+
     return response.json()
 
 
@@ -104,6 +105,7 @@ if __name__ == "__main__":
     upload_url = get_upload_url(access_token=ACCESS_TOKEN, group_id=GROUP_ID)
 
     uploaded_data = upload_picture(file_name, upload_url)
+
     saved_data = save_picture(
         server=uploaded_data["server"],
         hash=uploaded_data["hash"],
