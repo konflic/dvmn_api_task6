@@ -3,7 +3,7 @@ import shutil
 import requests
 import random
 
-from urllib.parse import urlparse, urljoin
+from urllib.parse import urlparse
 from dotenv import load_dotenv
 
 API_URL = "https://api.vk.com"
@@ -11,7 +11,6 @@ API_VERSION = "5.131"
 
 load_dotenv()
 
-CLIENT_ID = os.getenv("CLIENT_ID")
 ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
 GROUP_ID = os.getenv("GROUP_ID")
 
@@ -25,9 +24,7 @@ def get_comic(number):
 
 
 def get_random_comic():
-    response = requests.get(
-        url="https://xkcd.com/info.0.json"
-    )
+    response = requests.get(url="https://xkcd.com/info.0.json")
     response.raise_for_status()
     last_comic = int(response.json()["num"])
     return get_comic(random.randint(1, last_comic))
@@ -50,11 +47,7 @@ def download_picture(picture_url):
 def get_upload_url():
     response = requests.get(
         url=f"{API_URL}/method/photos.getWallUploadServer",
-        params={
-            "access_token": ACCESS_TOKEN,
-             "v": API_VERSION,
-             "group_id": GROUP_ID
-         },
+        params={"access_token": ACCESS_TOKEN, "v": API_VERSION, "group_id": GROUP_ID},
     )
     response.raise_for_status()
     return response.json()["response"]["upload_url"]
@@ -73,11 +66,7 @@ def upload_picture(file_name, upload_url):
 def save_picture(upload_data):
     response = requests.post(
         url=f"{API_URL}/method/photos.saveWallPhoto",
-        params={
-            "access_token": ACCESS_TOKEN, 
-            "v": API_VERSION,
-            "group_id": GROUP_ID
-        },
+        params={"access_token": ACCESS_TOKEN, "v": API_VERSION, "group_id": GROUP_ID},
         data={
             "server": upload_data["server"],
             "hash": upload_data["hash"],
