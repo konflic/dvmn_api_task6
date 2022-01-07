@@ -40,6 +40,8 @@ def download_picture(picture_url):
     response = requests.get(url=picture_url, stream=True)
     response.raise_for_status()
 
+    os.makedirs("Files", exist_ok=True)
+
     with open(f"Files/{out_file_name}", "wb") as file:
         shutil.copyfileobj(response.raw, file)
     return out_file_name
