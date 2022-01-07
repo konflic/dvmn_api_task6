@@ -26,17 +26,18 @@ def get_random_comic():
     return get_comic(random.randint(1, last_comic))
 
 
-def download_picture(picture_url):
+def download_picture(picture_url, folder="Files"):
     img_path = unquote(split(urlparse(picture_url).path)[-1])
     out_file_name = os.path.basename(img_path)
 
     response = requests.get(url=picture_url, stream=True)
     response.raise_for_status()
 
-    os.makedirs("Files", exist_ok=True)
+    os.makedirs(folder, exist_ok=True)
 
-    with open(f"Files/{out_file_name}", "wb") as file:
+    with open(os.path.join(folder, out_file_name), "wb") as file:
         shutil.copyfileobj(response.raw, file)
+
     return out_file_name
 
 
