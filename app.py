@@ -9,11 +9,6 @@ from dotenv import load_dotenv
 API_URL = "https://api.vk.com"
 API_VERSION = "5.131"
 
-load_dotenv()
-
-ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
-GROUP_ID = os.getenv("GROUP_ID")
-
 
 def get_comic(number):
     response = requests.get(
@@ -44,10 +39,10 @@ def download_picture(picture_url):
     return out_file_name
 
 
-def get_upload_url():
+def get_upload_url(access_token, group_id):
     response = requests.get(
         url=f"{API_URL}/method/photos.getWallUploadServer",
-        params={"access_token": ACCESS_TOKEN, "v": API_VERSION, "group_id": GROUP_ID},
+        params={"access_token": access_token, "v": API_VERSION, "group_id": group_id},
     )
     response.raise_for_status()
     return response.json()["response"]["upload_url"]
@@ -63,10 +58,10 @@ def upload_picture(file_name, upload_url):
     return response.json()
 
 
-def save_picture(upload_data):
+def save_picture(upload_data, access_token, group_id):
     response = requests.post(
         url=f"{API_URL}/method/photos.saveWallPhoto",
-        params={"access_token": ACCESS_TOKEN, "v": API_VERSION, "group_id": GROUP_ID},
+        params={"access_token": access_token, "v": API_VERSION, "group_id": group_id},
         data={
             "server": upload_data["server"],
             "hash": upload_data["hash"],
@@ -77,16 +72,16 @@ def save_picture(upload_data):
     return response.json()["response"][0]
 
 
-def publish_picture_on_wall(save_data, message):
+def publish_picture_on_wall(save_data, message, access_token, group_id):
     attachment = f"photo{save_data['owner_id']}_{save_data['id']}"
     response = requests.post(
         url=f"{API_URL}/method/wall.post",
         params={
-            "access_token": ACCESS_TOKEN,
+            "access_token": access_token,
             "v": API_VERSION,
         },
         data={
-            "owner_id": "-" + GROUP_ID,
+            "owner_id": "-" + group_id,
             "from_group": 1,
             "attachments": attachment,
             "message": message,
@@ -97,14 +92,21 @@ def publish_picture_on_wall(save_data, message):
 
 
 if __name__ == "__main__":
+    load_dotenv()
+
+    ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
+    GROUP_ID = os.getenv("GROUP_ID")
+
     comic_data = get_random_comic()
     comic_img = comic_data["img"]
     comic_title = comic_data["alt"]
 
     file_name = download_picture(comic_img)
-    upload_url = get_upload_url()
+    upload_url = get_upload_url(access_token=ACCESS_TOKEN, group_id=GROUP_ID)
 
     upload_data = upload_picture(file_name, upload_url)
-    save_data = save_picture(upload_data)
+    save_data = save_picture(upload_data, access_token=ACCESS_TOKEN, group_id=GROUP_ID)
 
-    publish_picture_on_wall(save_data, message=comic_title)
+    publish_picture_on_wall(
+        save_data, message=comic_title, access_token=ACCESS_TOKEN, group_id=GROUP_ID
+    )
