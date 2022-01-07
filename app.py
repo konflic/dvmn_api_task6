@@ -106,9 +106,9 @@ if __name__ == "__main__":
     file_name = download_picture(comic_img)
     upload_url = get_upload_url(access_token=ACCESS_TOKEN, group_id=GROUP_ID)
 
-    upload_data = upload_picture(file_name, upload_url)
-    save_data = save_picture(upload_data, access_token=ACCESS_TOKEN, group_id=GROUP_ID)
+    uploaded_data = upload_picture(file_name, upload_url)
+    saved_data = save_picture(uploaded_data, access_token=ACCESS_TOKEN, group_id=GROUP_ID)
 
     publish_picture_on_wall(
-        save_data, message=comic_title, access_token=ACCESS_TOKEN, group_id=GROUP_ID
+        saved_data, message=comic_title, access_token=ACCESS_TOKEN, group_id=GROUP_ID
     )
