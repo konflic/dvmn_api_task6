@@ -19,6 +19,11 @@ def get_comic(number):
     return response.json()
 
 
+def check_vk_errors(response):
+    if response.json().get("error"):
+        raise requests.HTTPError()
+
+
 def get_random_comic():
     response = requests.get(url="https://xkcd.com/info.0.json")
     response.raise_for_status()
@@ -37,7 +42,6 @@ def download_picture(picture_url, folder="Files"):
 
     with open(os.path.join(folder, out_file_name), "wb") as file:
         shutil.copyfileobj(response.raw, file)
-
     return out_file_name
 
 
@@ -47,18 +51,23 @@ def get_upload_url(access_token, group_id):
         params={"access_token": access_token, "v": API_VERSION, "group_id": group_id},
     )
     response.raise_for_status()
+    check_vk_errors(response)
     return response.json()["response"]["upload_url"]
 
 
 def upload_picture(file_name, upload_url, folder="Files"):
     file_path = os.path.join(folder, file_name)
-
-    with open(file_path, "rb") as file:
-        files = {"file1": file}
-        response = requests.post(upload_url, files=files)
-        response.raise_for_status()
-
-    return response.json()
+    try:
+        with open(file_path, "rb") as file:
+            files = {"file1": file}
+            response = requests.post(upload_url, files=files)
+            response.raise_for_status()
+            check_vk_errors(response)
+        return response.json()
+    except:
+        pass
+    finally:
+        os.remove(file_path)
 
 
 def save_picture(server, hash, photo, access_token, group_id):
@@ -68,6 +77,7 @@ def save_picture(server, hash, photo, access_token, group_id):
         data={"server": server, "hash": hash, "photo": photo},
     )
     response.raise_for_status()
+    check_vk_errors(response)
     return response.json()["response"][0]
 
 
@@ -88,6 +98,7 @@ def publish_picture_on_wall(owner_id, _id, message, access_token, group_id):
         },
     )
     response.raise_for_status()
+    check_vk_errors(response)
     return response.json()
 
 
