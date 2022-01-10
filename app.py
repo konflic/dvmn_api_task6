@@ -6,8 +6,8 @@ import random
 from urllib.parse import urlparse, unquote
 from dotenv import load_dotenv
 
-API_URL = "https://api.vk.com"
-API_VERSION = "5.131"
+VK_API_URL = "https://api.vk.com"
+VK_API_VERSION = "5.131"
 
 
 def get_comic(number):
@@ -46,10 +46,10 @@ def download_picture(picture_url, folder="Files"):
 
 def get_upload_url(access_token, group_id):
     response = requests.get(
-        url=f"{API_URL}/method/photos.getWallUploadServer",
+        url=f"{VK_API_URL}/method/photos.getWallUploadServer",
         params={
             "access_token": access_token,
-            "v": API_VERSION,
+            "v": VK_API_VERSION,
             "group_id": group_id
         },
     )
@@ -71,10 +71,10 @@ def upload_picture(file_name, upload_url, folder="Files"):
 
 def save_picture(server, _hash, photo, access_token, group_id):
     response = requests.post(
-        url=f"{API_URL}/method/photos.saveWallPhoto",
+        url=f"{VK_API_URL}/method/photos.saveWallPhoto",
         params={
             "access_token": access_token,
-            "v": API_VERSION,
+            "v": VK_API_VERSION,
             "group_id": group_id
         },
         data={"server": server, "hash": _hash, "photo": photo},
@@ -87,10 +87,10 @@ def publish_picture_on_wall(owner_id, _id, message, access_token, group_id):
     attachment = f"photo{owner_id}_{_id}"
 
     response = requests.post(
-        url=f"{API_URL}/method/wall.post",
+        url=f"{VK_API_URL}/method/wall.post",
         params={
             "access_token": access_token,
-            "v": API_VERSION,
+            "v": VK_API_VERSION,
         },
         data={
             "owner_id": "-" + group_id,
@@ -107,8 +107,8 @@ if __name__ == "__main__":
     load_dotenv()
     download_folder = "Files"
 
-    ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
-    GROUP_ID = os.getenv("GROUP_ID")
+    VK_ACCESS_TOKEN = os.getenv("VK_ACCESS_TOKEN")
+    VK_GROUP_ID = os.getenv("VK_GROUP_ID")
 
     comic_data = get_random_comic()
     comic_img = comic_data["img"]
@@ -117,7 +117,7 @@ if __name__ == "__main__":
     os.makedirs(download_folder, exist_ok=True)
     file_name = download_picture(comic_img, folder=download_folder)
 
-    upload_url = get_upload_url(access_token=ACCESS_TOKEN, group_id=GROUP_ID)
+    upload_url = get_upload_url(access_token=VK_ACCESS_TOKEN, group_id=VK_GROUP_ID)
     uploaded_data = upload_picture(file_name, upload_url)
 
     if not uploaded_data:
@@ -127,14 +127,14 @@ if __name__ == "__main__":
             server=uploaded_data["server"],
             _hash=uploaded_data["hash"],
             photo=uploaded_data["photo"],
-            access_token=ACCESS_TOKEN,
-            group_id=GROUP_ID
+            access_token=VK_ACCESS_TOKEN,
+            group_id=VK_GROUP_ID
         )
 
         publish_picture_on_wall(
             owner_id=saved_data['owner_id'],
             _id=saved_data['id'],
             message=comic_title,
-            access_token=ACCESS_TOKEN,
-            group_id=GROUP_ID
+            access_token=VK_ACCESS_TOKEN,
+            group_id=VK_GROUP_ID
         )

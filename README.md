@@ -16,8 +16,8 @@ pip install -r requirements.txt
 ### Для запуска приложения
 
 1. Прописать значения для всех необходимых переменных в файле .env, названия переменных уже добавлены.
-   1. ACCESS_TOKEN - токен доступа. Как получить см. [здесь](https://dev.vk.com/api/access-token/implicit-flow-user).
-   3. GROUP_ID - это идентификатор вашей созданной группы, его можно получить в адресной строке открытой страницы группы. Как создать группу смотри [здесь](https://vk.com/biz/article/sozdanie-vybor-tipa-i-tematiki).
+   1. VK_ACCESS_TOKEN - токен доступа. Как получить см. [здесь](https://dev.vk.com/api/access-token/implicit-flow-user).
+   3. VK_GROUP_ID - это идентификатор вашей созданной группы, его можно получить в адресной строке открытой страницы группы. Как создать группу смотри [здесь](https://vk.com/biz/article/sozdanie-vybor-tipa-i-tematiki).
 2. Как правильно заполнить и для чего нужен файл .env написано [здесь](https://pypi.org/project/python-dotenv/0.9.1/#usages)
 3. Подготовить [группу](https://vk.com/groups) и [приложение](https://vk.com/apps?act=manage) по [документации](https://vk.com/dev)
 
