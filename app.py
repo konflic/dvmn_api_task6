@@ -3,7 +3,6 @@ import shutil
 import requests
 import random
 
-from os.path import split
 from urllib.parse import urlparse, unquote
 from dotenv import load_dotenv
 
@@ -38,8 +37,6 @@ def download_picture(picture_url, folder="Files"):
     response = requests.get(url=picture_url, stream=True)
     response.raise_for_status()
 
-    os.makedirs(folder, exist_ok=True)
-
     with open(os.path.join(folder, out_file_name), "wb") as file:
         shutil.copyfileobj(response.raw, file)
     return out_file_name
@@ -64,10 +61,8 @@ def upload_picture(file_name, upload_url, folder="Files"):
             response.raise_for_status()
             check_vk_errors(response)
         return response.json()
-    except:
-        pass
-    finally:
-        os.remove(file_path)
+    except requests.HTTPError:
+        return None
 
 
 def save_picture(server, hash, photo, access_token, group_id):
@@ -104,6 +99,7 @@ def publish_picture_on_wall(owner_id, _id, message, access_token, group_id):
 
 if __name__ == "__main__":
     load_dotenv()
+    download_folder = "Files"
 
     ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
     GROUP_ID = os.getenv("GROUP_ID")
@@ -112,23 +108,27 @@ if __name__ == "__main__":
     comic_img = comic_data["img"]
     comic_title = comic_data["alt"]
 
-    file_name = download_picture(comic_img)
-    upload_url = get_upload_url(access_token=ACCESS_TOKEN, group_id=GROUP_ID)
+    os.makedirs(download_folder, exist_ok=True)
+    file_name = download_picture(comic_img, folder=download_folder)
 
+    upload_url = get_upload_url(access_token=ACCESS_TOKEN, group_id=GROUP_ID)
     uploaded_data = upload_picture(file_name, upload_url)
 
-    saved_data = save_picture(
-        server=uploaded_data["server"],
-        hash=uploaded_data["hash"],
-        photo=uploaded_data["photo"],
-        access_token=ACCESS_TOKEN,
-        group_id=GROUP_ID
-    )
+    if not uploaded_data:
+        os.remove(os.path.join(download_folder, file_name))
+    else:
+        saved_data = save_picture(
+            server=uploaded_data["server"],
+            hash=uploaded_data["hash"],
+            photo=uploaded_data["photo"],
+            access_token=ACCESS_TOKEN,
+            group_id=GROUP_ID
+        )
 
-    publish_picture_on_wall(
-        owner_id=saved_data['owner_id'],
-        _id=saved_data['id'],
-        message=comic_title,
-        access_token=ACCESS_TOKEN,
-        group_id=GROUP_ID
-    )
+        publish_picture_on_wall(
+            owner_id=saved_data['owner_id'],
+            _id=saved_data['id'],
+            message=comic_title,
+            access_token=ACCESS_TOKEN,
+            group_id=GROUP_ID
+        )
