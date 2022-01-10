@@ -110,30 +110,30 @@ if __name__ == "__main__":
     vk_access_token = os.getenv("VK_ACCESS_TOKEN")
     vk_group_id = os.getenv("VK_GROUP_ID")
 
-    comic_data = get_random_comic()
-    comic_img = comic_data["img"]
-    comic_title = comic_data["alt"]
+    comic = get_random_comic()
+    comic_img = comic["img"]
+    comic_title = comic["alt"]
 
     os.makedirs(download_folder, exist_ok=True)
     file_name = download_picture(comic_img, folder=download_folder)
 
     upload_url = get_upload_url(access_token=vk_access_token, group_id=vk_group_id)
-    uploaded_data = upload_picture(file_name, upload_url)
+    uploaded = upload_picture(file_name, upload_url)
 
-    if not uploaded_data:
+    if not uploaded:
         os.remove(os.path.join(download_folder, file_name))
     else:
-        saved_data = save_picture(
-            server=uploaded_data["server"],
-            _hash=uploaded_data["hash"],
-            photo=uploaded_data["photo"],
+        saved = save_picture(
+            server=uploaded["server"],
+            _hash=uploaded["hash"],
+            photo=uploaded["photo"],
             access_token=vk_access_token,
             group_id=vk_group_id
         )
 
         publish_picture_on_wall(
-            owner_id=saved_data['owner_id'],
-            _id=saved_data['id'],
+            owner_id=saved['owner_id'],
+            _id=saved['id'],
             message=comic_title,
             access_token=vk_access_token,
             group_id=vk_group_id
