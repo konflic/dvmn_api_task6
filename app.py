@@ -32,7 +32,7 @@ def get_random_comic():
 
 
 def download_picture(picture_url, folder="Files"):
-    img_path = unquote(split(urlparse(picture_url).path)[-1])
+    img_path = unquote(urlparse(picture_url).path)
     out_file_name = os.path.basename(img_path)
 
     response = requests.get(url=picture_url, stream=True)
