@@ -47,7 +47,11 @@ def download_picture(picture_url, folder="Files"):
 def get_upload_url(access_token, group_id):
     response = requests.get(
         url=f"{API_URL}/method/photos.getWallUploadServer",
-        params={"access_token": access_token, "v": API_VERSION, "group_id": group_id},
+        params={
+            "access_token": access_token,
+            "v": API_VERSION,
+            "group_id": group_id
+        },
     )
     response.raise_for_status()
     return check_vk_errors(response)["response"]["upload_url"]
@@ -68,7 +72,11 @@ def upload_picture(file_name, upload_url, folder="Files"):
 def save_picture(server, hash, photo, access_token, group_id):
     response = requests.post(
         url=f"{API_URL}/method/photos.saveWallPhoto",
-        params={"access_token": access_token, "v": API_VERSION, "group_id": group_id},
+        params={
+            "access_token": access_token,
+            "v": API_VERSION,
+            "group_id": group_id
+        },
         data={"server": server, "hash": hash, "photo": photo},
     )
     response.raise_for_status()
