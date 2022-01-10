@@ -19,8 +19,10 @@ def get_comic(number):
 
 
 def check_vk_errors(response):
-    if response.json().get("error"):
+    response_data = response.json()
+    if response_data.get("error"):
         raise requests.HTTPError()
+    return response_data
 
 
 def get_random_comic():
@@ -48,8 +50,7 @@ def get_upload_url(access_token, group_id):
         params={"access_token": access_token, "v": API_VERSION, "group_id": group_id},
     )
     response.raise_for_status()
-    check_vk_errors(response)
-    return response.json()["response"]["upload_url"]
+    return check_vk_errors(response)["response"]["upload_url"]
 
 
 def upload_picture(file_name, upload_url, folder="Files"):
@@ -59,8 +60,7 @@ def upload_picture(file_name, upload_url, folder="Files"):
             files = {"file1": file}
             response = requests.post(upload_url, files=files)
             response.raise_for_status()
-            check_vk_errors(response)
-        return response.json()
+            return check_vk_errors(response)
     except requests.HTTPError:
         return None
 
@@ -72,8 +72,7 @@ def save_picture(server, hash, photo, access_token, group_id):
         data={"server": server, "hash": hash, "photo": photo},
     )
     response.raise_for_status()
-    check_vk_errors(response)
-    return response.json()["response"][0]
+    return check_vk_errors(response)["response"][0]
 
 
 def publish_picture_on_wall(owner_id, _id, message, access_token, group_id):
@@ -93,8 +92,7 @@ def publish_picture_on_wall(owner_id, _id, message, access_token, group_id):
         },
     )
     response.raise_for_status()
-    check_vk_errors(response)
-    return response.json()
+    return check_vk_errors(response)
 
 
 if __name__ == "__main__":
