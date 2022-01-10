@@ -69,7 +69,7 @@ def upload_picture(file_name, upload_url, folder="Files"):
         return None
 
 
-def save_picture(server, hash, photo, access_token, group_id):
+def save_picture(server, _hash, photo, access_token, group_id):
     response = requests.post(
         url=f"{API_URL}/method/photos.saveWallPhoto",
         params={
@@ -77,7 +77,7 @@ def save_picture(server, hash, photo, access_token, group_id):
             "v": API_VERSION,
             "group_id": group_id
         },
-        data={"server": server, "hash": hash, "photo": photo},
+        data={"server": server, "hash": _hash, "photo": photo},
     )
     response.raise_for_status()
     return check_vk_errors(response)["response"][0]
@@ -125,7 +125,7 @@ if __name__ == "__main__":
     else:
         saved_data = save_picture(
             server=uploaded_data["server"],
-            hash=uploaded_data["hash"],
+            _hash=uploaded_data["hash"],
             photo=uploaded_data["photo"],
             access_token=ACCESS_TOKEN,
             group_id=GROUP_ID
