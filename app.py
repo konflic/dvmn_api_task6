@@ -19,10 +19,10 @@ def get_comic(number):
 
 
 def check_vk_errors(response):
-    response_data = response.json()
-    if response_data.get("error"):
+    response = response.json()
+    if response.get("error"):
         raise requests.HTTPError()
-    return response_data
+    return response
 
 
 def get_random_comic():
