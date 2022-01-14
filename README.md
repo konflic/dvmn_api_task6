@@ -21,7 +21,7 @@ pip install -r requirements.txt
    3. Как создать группу смотри, например, [здесь](https://vk.com/biz/article/sozdanie-vybor-tipa-i-tematiki).
 2. Как правильно заполнить и для чего нужен файл .env написано [здесь](https://pypi.org/project/python-dotenv/0.9.1/#usages)
 3. Создать [группу](https://vk.com/groups) и [приложение](https://vk.com/apps?act=manage).
-4. В [настройках vk-приложения](https://vk.com/editapp?id=8042776&section=options) выбрать "Приложение включено и видно всем"
+4. В [настройках vk-приложения](https://vk.com/apps?act=manage), выбрать "Редактировать", перейти в настройки и выбрать состояние "Приложение включено и видно всем"
 
 ### Запуск
 
