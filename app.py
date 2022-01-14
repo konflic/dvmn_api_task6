@@ -59,10 +59,13 @@ def get_upload_url(access_token, group_id):
 
 def upload_picture(file_name, upload_url, folder="Files"):
     file_path = os.path.join(folder, file_name)
-    with open(file_path, "rb") as file:
-        files = {"file1": file}
-        response = requests.post(upload_url, files=files)
-    response.raise_for_status()
+    try:
+        with open(file_path, "rb") as file:
+            files = {"file1": file}
+            response = requests.post(upload_url, files=files)
+        response.raise_for_status()
+    finally:
+        os.remove(file_path)
     return check_vk_errors(response)
 
 
@@ -117,21 +120,18 @@ if __name__ == "__main__":
     upload_url = get_upload_url(access_token=vk_access_token, group_id=vk_group_id)
     uploaded = upload_picture(file_name, upload_url)
 
-    if not uploaded:
-        os.remove(os.path.join(download_folder, file_name))
-    else:
-        saved = save_picture(
-            server=uploaded["server"],
-            _hash=uploaded["hash"],
-            photo=uploaded["photo"],
-            access_token=vk_access_token,
-            group_id=vk_group_id
-        )
+    saved = save_picture(
+        server=uploaded["server"],
+        _hash=uploaded["hash"],
+        photo=uploaded["photo"],
+        access_token=vk_access_token,
+        group_id=vk_group_id
+    )
 
-        publish_picture_on_wall(
-            owner_id=saved['owner_id'],
-            attachment_id=saved['id'],
-            message=comic_title,
-            access_token=vk_access_token,
-            group_id=vk_group_id
-        )
+    publish_picture_on_wall(
+        owner_id=saved['owner_id'],
+        attachment_id=saved['id'],
+        message=comic_title,
+        access_token=vk_access_token,
+        group_id=vk_group_id
+    )
