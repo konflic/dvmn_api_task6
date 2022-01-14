@@ -59,14 +59,11 @@ def get_upload_url(access_token, group_id):
 
 def upload_picture(file_name, upload_url, folder="Files"):
     file_path = os.path.join(folder, file_name)
-    try:
-        with open(file_path, "rb") as file:
-            files = {"file1": file}
+    with open(file_path, "rb") as file:
+        files = {"file1": file}
         response = requests.post(upload_url, files=files)
-        response.raise_for_status()
-        return check_vk_errors(response)
-    except requests.HTTPError:
-        return None
+    response.raise_for_status()
+    return check_vk_errors(response)
 
 
 def save_picture(server, _hash, photo, access_token, group_id):
