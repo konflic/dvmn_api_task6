@@ -83,8 +83,8 @@ def save_picture(server, _hash, photo, access_token, group_id):
     return check_vk_errors(response)["response"][0]
 
 
-def publish_picture_on_wall(owner_id, _id, message, access_token, group_id):
-    attachment = f"photo{owner_id}_{_id}"
+def publish_picture_on_wall(owner_id, attachment_id, message, access_token, group_id):
+    attachment = f"photo{owner_id}_{attachment_id}"
 
     response = requests.post(
         url=f"{VK_API_URL}/method/wall.post",
@@ -133,7 +133,7 @@ if __name__ == "__main__":
 
         publish_picture_on_wall(
             owner_id=saved['owner_id'],
-            _id=saved['id'],
+            attachment_id=saved['id'],
             message=comic_title,
             access_token=vk_access_token,
             group_id=vk_group_id
