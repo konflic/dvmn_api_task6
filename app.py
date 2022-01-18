@@ -21,7 +21,7 @@ def get_comic(number):
 def check_vk_errors(response):
     response = response.json()
     if response.get("error"):
-        raise requests.HTTPError(response.get("error_msg", "No error message"))
+        raise requests.HTTPError(response.get("error").get("error_msg", "No error message"))
     return response
 
 
