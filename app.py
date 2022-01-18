@@ -59,13 +59,10 @@ def get_upload_url(access_token, group_id):
 
 def upload_picture(file_name, upload_url, folder="Files"):
     file_path = os.path.join(folder, file_name)
-    try:
-        with open(file_path, "rb") as file:
-            files = {"file1": file}
-            response = requests.post(upload_url, files=files)
-        response.raise_for_status()
-    finally:
-        os.remove(file_path)
+    with open(file_path, "rb") as file:
+        files = {"file1": file}
+        response = requests.post(upload_url, files=files)
+    response.raise_for_status()
     return check_vk_errors(response)
 
 
@@ -117,8 +114,11 @@ if __name__ == "__main__":
     os.makedirs(download_folder, exist_ok=True)
     file_name = download_picture(comic_img, folder=download_folder)
 
-    upload_url = get_upload_url(access_token=vk_access_token, group_id=vk_group_id)
-    uploaded = upload_picture(file_name, upload_url)
+    try:
+        upload_url = get_upload_url(access_token=vk_access_token, group_id=vk_group_id)
+        uploaded = upload_picture(file_name, upload_url)
+    finally:
+        os.remove(os.path.join(download_folder, file_name))
 
     saved = save_picture(
         server=uploaded["server"],
