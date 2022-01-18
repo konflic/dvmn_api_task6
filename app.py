@@ -129,8 +129,8 @@ if __name__ == "__main__":
     )
 
     publish_picture_on_wall(
-        owner_id=saved['owner_id'],
-        attachment_id=saved['id'],
+        owner_id=saved["owner_id"],
+        attachment_id=saved["id"],
         message=comic_title,
         access_token=vk_access_token,
         group_id=vk_group_id
