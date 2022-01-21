@@ -1,5 +1,4 @@
 import os
-import shutil
 import requests
 import random
 
@@ -39,8 +38,8 @@ def download_picture(picture_url, folder="Files"):
     response = requests.get(url=picture_url, stream=True)
     response.raise_for_status()
 
-    with open(os.path.join(folder, out_file_name), "wb") as file:
-        shutil.copyfileobj(response.raw, file)
+    with open(os.path.join(folder, out_file_name), "wb+") as file:
+        file.write(response.content)
     return out_file_name
 
 
